@@ -1,0 +1,179 @@
+
+<!doctype html>
+<html>
+<head>
+<script async src="https://arc.io/widget.min.js#iidD4GEB" type="1619133d8680dc1c4431b45d-text/javascript"></script>
+<title>Bendrive Cloud Proxy Network</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+<link rel="icon" href="//ssl.gstatic.com/docs/doclist/images/infinite_arrow_favicon_5.ico">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+<base target="_blank">
+<style>
+         body {
+         padding: 0 0.5em;
+         }
+         .box {
+         margin-top: 1em;
+         }
+         #txtURL {
+         width: 100%;
+         height: 2em;
+         text-indent: 0.5em;
+         padding: 0.25em 0;
+         }
+         #btnGo {
+         width: 100%;
+         font-size: 1.5em;
+         }
+         #list a {
+         margin: 1em;
+         }
+      </style>
+</head>
+<body>
+<div class="container">
+<div class="py-5 text-center"><img src="https://telegra.ph/file/281ae593836e04d7f9c93.jpg" alt="" height="300"></div>
+<div class="col-md-12 order-md-1">
+<div class="box"><input id="txtURL" list="suggestions" class="form-control form-control-lg" type="text" value="" placeholder="Enter URL Address" autofocus>
+<datalist id="suggestions">
+<option>google.com</option>
+<option>facebook.com</option>
+</datalist>
+</div>
+<div class="box"><button id="btnGo" class="btn btn-primary btn-lg btn-block">Go</button></div>
+<div class="box" id="list"></div>
+</div>
+</div>
+<script type="1619133d8680dc1c4431b45d-text/javascript">
+         const PAGE_CONF_SET = 110
+         const PAGE_CONF_GET = 111
+         
+         const SW_CONF_RETURN = 112
+         const SW_CONF_CHANGE = 113
+         
+         const PAGE_READY_CHECK = 200
+         const SW_READY = 201
+         
+         const sw = navigator.serviceWorker
+         
+         
+         sw.addEventListener('message', onSwMsg)
+         sendMsgToSw(PAGE_READY_CHECK)
+         
+         btnGo.onclick = function() {
+           const text = txtURL.value.trim()
+           if (text) {
+             const url = './-----' + text
+             open(url, '_blank', 'noopener,noreferrer')
+           }
+         }
+         txtURL.onkeypress = function(e) {
+           if (e.keyCode === 13) {
+             btnGo.onclick()
+           }
+         }
+         txtURL.setSelectionRange(0, txtURL.value.length)
+         
+         
+         function onSwMsg(e) {
+           const [cmd, msg] = e.data
+         
+           switch (cmd) {
+           case SW_CONF_RETURN:
+             conf = msg
+             showConf()
+             break
+         
+           case SW_CONF_CHANGE:
+             conf = msg
+             updateSelected()
+             break
+         
+           case SW_READY:
+             console.log('sw ready')
+             showIcons()
+             sendMsgToSw(PAGE_CONF_GET)
+             break
+           }
+         }
+         
+         function onSwFail(err) {
+           txtURL.value = err
+         }
+         
+         selNode.onchange = function() {
+           const item = this.options[this.selectedIndex]
+           const node = item.value
+           conf.node_default = node
+           sendMsgToSw(PAGE_CONF_SET, conf)
+         }
+         
+         function sendMsgToSw(cmd, val) {
+           const ctl = sw.controller
+           if (!ctl) {
+             console.log('ctl is null')
+             return
+           }
+           ctl.postMessage([cmd, val])
+         }
+         
+         const SITE_LIST = [
+           ['google', ''],
+           ['youtube', ''],
+           ['twitter', 'twitter.com/google'],
+           ['flickr', ''],
+           ['quora', 'www.quora.com/topic/JavaScript-programming-language'],
+           ['twitch', 'www.twitch.tv/'],
+           ['reddit', ''],
+           ['wiki', 'en.wikipedia.org/'],
+           ['gist', 'gist.github.com/'],
+           ['facebook', 'facebook.com/Google/'],
+           ['blogger', ''],
+         ]
+         
+         function showIcons() {
+           list.innerHTML = SITE_LIST.map(v => {
+             let [id, url] = v
+             url = url || `www.${id}.com/`
+             return `\
+         <a rel="noopener noreferrer" href=./-----https://${url}>\
+         <img width=128 height=128 src=__sys__/assets/ico/${id}.png></a>`
+           }).join('')
+         }
+         
+         function addNodeItem(id, text) {
+           const optEl = document.createElement('option')
+           optEl.id = '--' + id
+           optEl.text = text
+           optEl.value = id
+           selNode.appendChild(optEl)
+         }
+         
+         function updateSelected() {
+           const id = conf.node_default
+           const item = document.getElementById('--' + id)
+           if (item) {
+             item.selected = true
+           } else {
+             console.warn('unknown node:', id)
+           }
+         }
+         
+         function showConf() {
+           for (const [id, node] of Object.entries(conf.node_map)) {
+             if (!node.hidden) {
+               addNodeItem(id, node.label)
+             }
+           }
+           updateSelected()
+         }
+      </script>
+<footer class="my-5 pt-5 text-muted text-center text-small">
+<p class="mb-1">&copy; 2022 Bendrive Cloud Cyber Systems</p>
+<ul class="list-inline">
+<li class="list-inline-item"><a href="https://telegram.dog/BenTennyson_xDBot" target="_blank">Telegram</a></li>
+</ul>
+</footer>
+<script src="/cdn-cgi/scripts/7d0fa10a/cloudflare-static/rocket-loader.min.js" data-cf-settings="1619133d8680dc1c4431b45d-|49" defer=""></script></body>
+</html>
